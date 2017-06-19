@@ -18,7 +18,7 @@ while i <= 264:
 	except:
 		print("No host found on 192.168.0."+str(i)+", moving on.")
 	i=i+1
-
+wait_exit=raw_input("waiting, press enter to exit...")
 # return list of ip and mac addresses, and aliases from configuration file (if available)
 
 # offer prompt
