@@ -5,7 +5,7 @@ from subprocess import call
 print("Welcome to Tint 0.0.1 (pre-alpha). Read the docs, dumbo.")
 # start listening on port 51674
 connection=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-connection.bind((socket.gethostname(),51674))
+connection.bind(('',51674))
 connection.listen(5)
 # scan network for that port on other devices
 i=0
@@ -13,8 +13,8 @@ hosts=[]
 while i <= 264:
 	try:
 		connection.connect("192.168.0."+str(i),51674)
-		print("Host found at 192.168.0."+str(i))
 		hosts=hosts+["192.168.0."+str(i)]
+		print("host found")
 	except:
 		print("No host found on 192.168.0."+str(i)+", moving on.")
 	i=i+1
