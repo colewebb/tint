@@ -13,7 +13,7 @@ hosts=[]
 while i <= 264:
 	try:
 		connection.connect("192.168.0."+str(i),51674)
-		connection.close()
+		print("Host found at 192.168.0."+str(i))
 		hosts=hosts+["192.168.0."+str(i)]
 	except:
 		print("No host found on 192.168.0."+str(i)+", moving on.")
