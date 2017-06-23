@@ -1,24 +1,29 @@
-# startup, imports
+# imports, startup message
 import socket
-from os import getenv
+from platform import system
 from subprocess import call
-print("Welcome to Tint 0.0.1 (pre-alpha). Read the docs, dumbo.")
+system_type=system().lower()
+print("Welcome to Tint 0.0.1 (pre-alpha) on "+system_type+". Read the docs, dumbo.")
 # start listening on port 51674
-connection=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-connection.bind(('',51674))
-connection.listen(5)
+receive=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+receive.bind(('',51674))
+receive.listen(5)
+# setup client socket
+send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+send.settimeout(5)
 # scan network for that port on other devices
 i=0
-hosts=[]
-while i <= 264:
-	try:
-		connection.connect("192.168.0."+str(i),51674)
-		hosts=hosts+["192.168.0."+str(i)]
-		print("host found")
-	except:
-		print("No host found on 192.168.0."+str(i)+", moving on.")
-	i=i+1
-wait_exit=raw_input("waiting, press enter to exit...")
+while i <=264:
+	if system_type == "windows":
+		stuff_to_call="ping -n 1 192.168.0."+str(i)
+		result=call(stuff_to_call,shell=True)
+		print(result)
+	else:
+		stuff_to_call=call("ping -c 1 192.168.0."+str(i)
+		result=call(stuff_to_call,shell=True)
+		print(result)
+# wait for permission to exit...
+raw_input("waiting, press enter to exit...")
 # return list of ip and mac addresses, and aliases from configuration file (if available)
 
 # offer prompt
@@ -32,3 +37,4 @@ wait_exit=raw_input("waiting, press enter to exit...")
 # send: use tint protocol to send file, including encryption key exchange, file information, confirmation, etc.
 
 # exit: notify other computers of exit, save files, exit
+receive.close()
