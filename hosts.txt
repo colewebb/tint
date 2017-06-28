@@ -1,5 +1,0 @@
-Nmap scan report for 192.168.0.1
-Nmap scan report for 192.168.0.34
-Nmap scan report for 192.168.0.35
-Nmap scan report for 192.168.0.61
-Nmap scan report for 192.168.0.63

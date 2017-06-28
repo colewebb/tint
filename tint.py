@@ -17,15 +17,38 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# imports, startup message, other startup
+# imports
 
 import socket
 from platform import system
 from subprocess import call, Popen
+from uuid import getnode
+
+# getting system type
+
 system_type=system().lower()
-print("Welcome to Tint 0.0.1 (pre-alpha) on "+system_type+". Read the docs, dumbo.\n\nTint Copyright (C) 2017 Cole Webb\nThis program comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; type 'show c' for details.\n")
+version_number="0.0.1"
+
+# printing welcome, license info
+
+print("Welcome to Tint "+version_number+" on "+system_type+". Read the docs, dumbo.\n\nTint Copyright (C) 2017 Cole Webb\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and\nyou are welcome to redistribute it under certain conditions. See the file\nlicense for more information on warranty restrictions and redistribution.\n")
+
+# getting local ip address
+
+try:
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("8.8.8.8", 80))
+	ip_address=s.getsockname()[0]
+except:
+	print("Using this program requires a network connection and an internet connection.\nOne or the other was not found. Exiting...")
+	exit()
 
 #function definitions
+mac_address=getnode()
+# print(':'.join(("%012X" % mac_address)[i:i+2] for i in range(0, 12, 2)))
+if (mac_address >> 40)%2:
+	print("No valid MAC address was found. Exiting...")
+	exit()
 
 def find_peers():
 	print("Using nmap to find potential peers on the network, please wait...")
@@ -39,10 +62,15 @@ def find_peers():
 	for peer in potential_peer_list:
 		try:
 			send.connect((peer,51674))
-			print("Peer found at "+peer+".")
-			peer_list.append(peer)
+			send.send("tint "+version_number+" "+system_type+" "+ip_address+" "+mac_address)
+			peer_found=True
 		except:
-			print("No host found on "+peer+".")
+			peer_found=False
+		if peer_found==True:
+			peer_list.append(peer)
+			print("Peer found on "+peer+".")
+		else:
+			print("Peer not found on "+peer+".")
 	return peer_list
 
 # setup client socket
@@ -59,10 +87,6 @@ while True:
 	elif command=="scan":
 		peers=find_peers()
 		print(peers)
-	elif command=="show w":
-		print("There is no warranty for the program, to the extent permitted by applicable\nlaw. Except when  otherwise stated in writing the copyright holders and/or\nother parties provide the program 'as is' without warranty of any kind, either\nexpressed or implied, including, but not limited to, the implied warranties of\nmerchantability and fitness for a particular purpose. The entire risk as to the\nquality and performance of the program is with you. Should the program prove\ndefective, you assume the cost of all necessary servicing, repair or correction.")
-	elif command=="show c":
-		
 	else:
 		print("Command '"+command+"' is not found. Try:\n\n - scan: scan network for peers\n - send: send a file to a peer\n - exit: exit the program\n")
 	command=raw_input("tint >>> ")
