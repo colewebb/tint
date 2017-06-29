@@ -21,16 +21,22 @@
 
 import socket
 from platform import system
-from subprocess import call, Popen
+from subprocess import call
 from uuid import getnode
+from os import path
 
 # getting system type
 
 system_type=system().lower()
-version_number="0.0.1"
+
+# getting installation location
+
+file_location=path.realpath(__file__)
+install_location=file_location[:-7]
 
 # printing welcome, license info
 
+version_number="0.0.2"
 print("Welcome to Tint "+version_number+" on "+system_type+". Read the docs, dumbo.\n\nTint Copyright (C) 2017 Cole Webb\nThis program comes with ABSOLUTELY NO WARRANTY. This is free software, and\nyou are welcome to redistribute it under certain conditions. See the file\nlicense for more information on warranty restrictions and redistribution.\n")
 
 # getting local ip address
@@ -40,7 +46,6 @@ try:
 	s.connect(("10.255.255.255", 80))
 	ip_address=s.getsockname()[0]
 	s.close()
-	print(ip_address)
 except:
 	print("Using this program requires a network connection, and one was not found.\nNow exiting...")
 	exit()
@@ -57,9 +62,10 @@ if (mac_address >> 40)%2:
 
 def find_peers():
 	print("Using nmap to find potential peers on the network, please wait...")
-	call("nmap -p 51674 192.168.0.0/24 | grep 'Nmap scan report' > /home/rebooted/scripts/tint/hosts.txt",shell=True)
+	execute_line=install_location+"nmap -p 51674 192.168.0.0/24 | grep 'Nmap scan report' > "+install_location+"hosts.txt"
+	call(execute_line,shell=True)
 	print("nmap host discovery completed. moving on to connection testing...")
-	peers=open("/home/rebooted/scripts/tint/hosts.txt")
+	peers=open(install_location+"hosts.txt")
 	potential_peer_list=[]
 	peer_list=[]
 	for line in peers:
@@ -77,11 +83,15 @@ def find_peers():
 		else:
 			print("Peer not found on "+peer+".")
 	return peer_list
+def correct_shutdown():
+	send.close()
 
 # setup client socket
 
 send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 send.settimeout(5)
+
+# set up input loop
 
 command=raw_input("tint >>> ")
 while True:
@@ -91,10 +101,10 @@ while True:
 		exit()
 	elif command=="scan":
 		peers=find_peers()
-		print(peers)
 	else:
 		print("Command '"+command+"' is not found. Try:\n\n - scan: scan network for peers\n - send: send a file to a peer\n - exit: exit the program\n")
 	command=raw_input("tint >>> ")
+
 # return list of ip and mac addresses, and aliases from configuration file (if available)
 
 # offer prompt
@@ -107,6 +117,6 @@ while True:
 
 # send: use tint protocol to send file, including encryption key exchange, file information, confirmation, etc.
 
-# exit: notify other computers of exit, save files, exit
+# exit: save files, exit
 
-send.close()
+correct_shutdown()
