@@ -36,19 +36,24 @@ print("Welcome to Tint "+version_number+" on "+system_type+". Read the docs, dum
 # getting local ip address
 
 try:
-	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	s.connect(("8.8.8.8", 80))
+	s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("10.255.255.255", 80))
 	ip_address=s.getsockname()[0]
+	s.close()
+	print(ip_address)
 except:
-	print("Using this program requires a network connection and an internet connection.\nOne or the other was not found. Exiting...")
+	print("Using this program requires a network connection, and one was not found.\nNow exiting...")
 	exit()
 
-#function definitions
+# getting mac address
+
 mac_address=getnode()
 # print(':'.join(("%012X" % mac_address)[i:i+2] for i in range(0, 12, 2)))
 if (mac_address >> 40)%2:
 	print("No valid MAC address was found. Exiting...")
 	exit()
+
+# function definitions
 
 def find_peers():
 	print("Using nmap to find potential peers on the network, please wait...")
