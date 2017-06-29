@@ -31,3 +31,9 @@ print("listening on port 51674")
 receive=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 receive.bind(('',51674))
 receive.listen(5)
+input=raw_input("tint-server >>> ")
+while True:
+	if input=="x":
+		exit()
+	else:
+		pass
