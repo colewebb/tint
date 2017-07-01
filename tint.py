@@ -24,6 +24,7 @@ from platform import system
 from subprocess import call
 from uuid import getnode
 from os import path
+from time import sleep
 
 # getting system type
 
@@ -61,6 +62,8 @@ if (mac_address >> 40)%2:
 # function definitions
 
 def find_peers():
+	send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	send.settimeout(10)
 	print("Using nmap to find potential peers on the network, please wait...")
 	execute_line=install_location+"nmap -p 51674 192.168.0.0/24 | grep 'Nmap scan report' > "+install_location+"hosts.txt"
 	call(execute_line,shell=True)
@@ -72,8 +75,10 @@ def find_peers():
 		potential_peer_list.append(line[21:].rstrip())
 	for peer in potential_peer_list:
 		try:
+			print peer
 			send.connect((peer,51674))
 			send.send("tint "+version_number+" "+system_type+" "+ip_address+" "+mac_address)
+#			sleep(0.01)
 			peer_found=True
 		except:
 			peer_found=False
@@ -85,7 +90,6 @@ def find_peers():
 	return peer_list
 
 def correct_shutdown():
-	send.close()
 	exit()
 
 def transfer():
@@ -98,11 +102,6 @@ def transfer():
 	except:
 		print("That doesn't appear to be a valid file path. Check the path and try again.")
 		pass
-	
-# setup client socket
-
-send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-send.settimeout(10)
 
 # set up input loop
 
