@@ -70,4 +70,5 @@ while True:
 	(client_socket,client_address)=receive.accept()
 	request=client_socket.recv(1024)
 	print request
+	recieve.close()
 	
