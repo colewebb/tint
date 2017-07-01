@@ -85,7 +85,10 @@ def find_peers():
 	return peer_list
 def correct_shutdown():
 	send.close()
-
+def transfer():
+	transfer_location=raw_input("Please input the path of the file you would like to send: ")
+	print(transfer_location)
+	
 # setup client socket
 
 send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -96,11 +99,13 @@ send.settimeout(5)
 command=raw_input("tint >>> ")
 while True:
 	if command=="x":
-		exit()
+		correct_shutdown()
 	elif command=="exit":
-		exit()
+		correct_shutdown()
 	elif command=="scan":
 		peers=find_peers()
+	elif command=="send":
+		transfer()
 	else:
 		print("Command '"+command+"' is not found. Try:\n\n - scan: scan network for peers\n - send: send a file to a peer\n - exit: exit the program\n")
 	command=raw_input("tint >>> ")

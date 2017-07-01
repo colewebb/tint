@@ -33,6 +33,9 @@ receive.bind(('',51674))
 receive.listen(5)
 input=raw_input("tint-server >>> ")
 while True:
+	(clientsocket,address)=receive.accept()
+	ct=client_thread(clientsocket)
+	ct.run()
 	if input=="x":
 		exit()
 	else:
