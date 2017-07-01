@@ -83,21 +83,31 @@ def find_peers():
 		else:
 			print("Peer not found on "+peer+".")
 	return peer_list
+
 def correct_shutdown():
 	send.close()
+	exit()
+
 def transfer():
-	transfer_location=raw_input("Please input the path of the file you would like to send: ")
-	print(transfer_location)
+	file_location=raw_input("Please input the path of the file you would like to send: ")
+	try:
+		transfer_file=open(file_location)
+		print("file found")
+		transfer_file.close()
+		pass
+	except:
+		print("That doesn't appear to be a valid file path. Check the path and try again.")
+		pass
 	
 # setup client socket
 
 send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-send.settimeout(5)
+send.settimeout(10)
 
 # set up input loop
 
-command=raw_input("tint >>> ")
 while True:
+	command=raw_input("tint >>> ")
 	if command=="x":
 		correct_shutdown()
 	elif command=="exit":
@@ -108,7 +118,6 @@ while True:
 		transfer()
 	else:
 		print("Command '"+command+"' is not found. Try:\n\n - scan: scan network for peers\n - send: send a file to a peer\n - exit: exit the program\n")
-	command=raw_input("tint >>> ")
 
 # return list of ip and mac addresses, and aliases from configuration file (if available)
 
