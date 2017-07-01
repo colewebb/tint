@@ -62,8 +62,6 @@ if (mac_address >> 40)%2:
 # function definitions
 
 def find_peers():
-	send=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	send.settimeout(10)
 	print("Using nmap to find potential peers on the network, please wait...")
 	execute_line=install_location+"nmap -p 51674 192.168.0.0/24 | grep 'Nmap scan report' > "+install_location+"hosts.txt"
 	call(execute_line,shell=True)
@@ -74,14 +72,17 @@ def find_peers():
 	for line in peers:
 		potential_peer_list.append(line[21:].rstrip())
 	for peer in potential_peer_list:
+		print peer
+		send=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
-			print peer
-			send.connect((peer,51674))
-			send.send("tint "+version_number+" "+system_type+" "+ip_address+" "+mac_address)
+			send.connect((str(peer),51674))
+			send.send("tint")
+#			send.send("tint "+version_number+" "+system_type+" "+ip_address+" "+mac_address)
 #			sleep(0.01)
 			peer_found=True
+			send.close()
 		except:
-			peer_found=False
+			print("Host not found on "+peer+".")
 		if peer_found==True:
 			peer_list.append(peer)
 			print("Peer found on "+peer+".")
